@@ -1,6 +1,8 @@
 package com.aggy.restfulwebservices.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -22,11 +24,15 @@ public class UserController {
     }
 
     @GetMapping(path = "/users/{id}")
-    public User retrieveUser(@PathVariable Integer id) {
+    public Resource retrieveUser(@PathVariable Integer id) {
         try {
 
             User user = userDao.find(id);
-            return user;
+
+            Resource<User> resource = new Resource<>(user);
+            ControllerLinkBuilder linkTo = ControllerLinkBuilder.linkTo(ControllerLinkBuilder.methodOn(this.getClass()).retrieveAllUsers());
+            resource.add(linkTo.withRel("all-users"));
+            return resource;
         } catch (NoSuchElementException e) {
             throw new UserNotFoundException("id: " + id);
         }
