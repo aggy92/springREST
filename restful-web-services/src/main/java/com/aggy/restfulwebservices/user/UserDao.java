@@ -3,10 +3,7 @@ package com.aggy.restfulwebservices.user;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 public class UserDao {
@@ -36,5 +33,17 @@ public class UserDao {
                 .filter(u -> u.getId().equals(id))
                 .findFirst()
                 .get();
+    }
+
+    public User deleteById(int id) {
+        Iterator<User> iterator = users.iterator();
+        while(iterator.hasNext()) {
+            User tempUser = iterator.next();
+            if(tempUser.getId().equals(id)) {
+                iterator.remove();
+                return tempUser;
+            }
+        }
+        return null;
     }
 }
