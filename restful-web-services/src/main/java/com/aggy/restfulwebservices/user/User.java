@@ -1,5 +1,8 @@
 package com.aggy.restfulwebservices.user;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
@@ -12,6 +15,7 @@ public class User {
     private String name;
 
     @Past
+    @ApiModelProperty(notes = "Date must be from past.", example = "12.01.1999")
     private LocalDate birthDate;
 
     public User(Integer id, String name, LocalDate birthDate) {
