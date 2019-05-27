@@ -12,6 +12,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @RestController
 public class UserController {
@@ -19,16 +20,24 @@ public class UserController {
     @Autowired
     private UserDao userDao;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @GetMapping(path = "/users")
     public List<User> retrieveAllUsers() {
-        return userDao.findAll();
+        return userRepository.findAll();
     }
 
     @GetMapping(path = "/users/{id}")
     public Resource retrieveUser(@PathVariable Integer id) {
         try {
 
-            User user = userDao.find(id);
+            Optional<User> userOpt = userRepository.findById(id);
+
+            User user = null;
+            if(userOpt.isPresent()) {
+                user = userOpt.get();
+            }
 
             Resource<User> resource = new Resource<>(user);
             ControllerLinkBuilder linkTo = ControllerLinkBuilder.linkTo(ControllerLinkBuilder.methodOn(this.getClass()).retrieveAllUsers());
@@ -41,7 +50,7 @@ public class UserController {
 
     @PostMapping("/users")
     public ResponseEntity<Object> createUser(@RequestBody @Valid User user) {
-         User userResult = userDao.save(user);
+         User userResult = userRepository.save(user);
 
          URI location = ServletUriComponentsBuilder
                  .fromCurrentRequest()

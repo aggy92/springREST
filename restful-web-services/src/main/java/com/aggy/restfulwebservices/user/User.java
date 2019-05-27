@@ -1,14 +1,18 @@
 package com.aggy.restfulwebservices.user;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.validation.constraints.Min;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
+@Entity
 public class User {
+    @Id
+    @GeneratedValue
     private Integer id;
 
     @Size(min = 2, message = "Name cannot be shorter than 2 characters")
@@ -17,6 +21,9 @@ public class User {
     @Past
     @ApiModelProperty(notes = "Date must be from past.", example = "12.01.1999")
     private LocalDate birthDate;
+
+    public User() {
+    }
 
     public User(Integer id, String name, LocalDate birthDate) {
         this.id = id;
