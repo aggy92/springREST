@@ -1,5 +1,7 @@
 package com.aggy.restfulwebservices.user;
 
+import com.aggy.restfulwebservices.user.post.Post;
+import com.aggy.restfulwebservices.user.post.PostRepository;
 import io.swagger.annotations.ApiModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
@@ -22,6 +24,9 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PostRepository postRepository;
 
     @GetMapping(path = "/users")
     public List<User> retrieveAllUsers() {
@@ -61,10 +66,37 @@ public class UserController {
 
     @DeleteMapping("/users/{id}")
     public void deleteUser(@PathVariable Integer id) {
-        User user = userDao.deleteById(id);
+
+        Optional<User> userOpt = userRepository.findById(id);
+
+        User user = null;
+        if(userOpt.isPresent()) {
+            user = userOpt.get();
+        }
+
 
         if(user == null) {
             throw new UserNotFoundException("id-" + id);
         }
+
+        userRepository.delete(user);
+    }
+
+    @GetMapping("/users/{userId}/posts")
+    public List<Post> getPostsByUser(@PathVariable Integer userId) {
+        Optional<User> userOpt = userRepository.findById(userId);
+
+        User user = null;
+        if(userOpt.isPresent()) {
+            user = userOpt.get();
+        }
+
+
+        if(user == null) {
+            throw new UserNotFoundException("id-" + userId);
+        }
+
+        return postRepository.findByUserId(userId);
+
     }
 }
